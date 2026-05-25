@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mental Math Trainer</title>
+
+<style>
+
+body{
+    font-family: Arial, sans-serif;
+    background:#111;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.container{
+    max-width:500px;
+    margin:auto;
+}
+
+button{
+    padding:12px 18px;
+    margin:6px;
+    font-size:16px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+select{
+    padding:10px;
+    margin:10px;
+    font-size:16px;
+    border-radius:8px;
+}
+
+#question{
+    font-size:45px;
+    margin-top:50px;
+    min-height:60px;
+}
+
+#answer{
+    font-size:30px;
+    color:#00ffcc;
+    margin-top:20px;
+    min-height:40px;
+}
+
+.control-box{
+    margin-top:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🧠 Mental Math Trainer</h1>
+
+<div>
+
+<button onclick="setOperation('+')">
+Addition
+</button>
+
+<button onclick="setOperation('-')">
+Subtraction
+</button>
+
+<button onclick="setOperation('*')">
+Multiplication
+</button>
+
+<button onclick="setOperation('/')">
+Division
+</button>
+
+</div>
+
+<div>
+
+<label>Range:</label>
+
+<select id="range">
+<option value="10">1-10</option>
+<option value="20">1-20</option>
+<option value="50">1-50</option>
+<option value="100">1-100</option>
+</select>
+
+</div>
+
+<div>
+
+<label>Time:</label>
+
+<select id="time">
+<option value="2">2 sec</option>
+<option value="3">3 sec</option>
+<option value="5">5 sec</option>
+<option value="8">8 sec</option>
+</select>
+
+</div>
+
+<div class="control-box">
+
+<button onclick="startGame()">
+▶ Start
+</button>
+
+<button onclick="stopGame()">
+⏹ Stop
+</button>
+
+</div>
+
+<div id="question"></div>
+<div id="answer"></div>
+
+</div>
+
+<script>
+
+let operation="+";
+
+let answerTimer;
+let nextQuestionTimer;
+
+let running=false;
+
+function setOperation(op){
+    operation=op;
+}
+
+function randomNum(max){
+    return Math.floor(Math.random()*max)+1;
+}
+
+function generateAdditionAbove10(){
+
+    let a,b;
+
+    do{
+        a=randomNum(9);
+        b=randomNum(9);
+
+    }while(a+b<=10);
+
+    return {a,b};
+}
+
+function generateQuestion(){
+
+    if(!running) return;
+
+    let range=
+    parseInt(
+    document.getElementById(
+    "range").value);
+
+    let a,b;
+
+    if(operation==="+"){
+
+        let pair=
+        generateAdditionAbove10();
+
+        a=pair.a;
+        b=pair.b;
+
+    }
+
+    else{
+
+        a=randomNum(range);
+        b=randomNum(range);
+
+        if(operation==="/"){
+
+            a=a*b;
+
+        }
+
+    }
+
+    let result;
+
+    switch(operation){
+
+        case "+":
+        result=a+b;
+        break;
+
+        case "-":
+        result=a-b;
+        break;
+
+        case "*":
+        result=a*b;
+        break;
+
+        case "/":
+        result=a/b;
+        break;
+    }
+
+document.getElementById(
+"question"
+).innerText=
+`${a} ${operation} ${b}`;
+
+document.getElementById(
+"answer"
+).innerText="";
+
+let time=
+parseInt(
+document.getElementById(
+"time").value
+)*1000;
+
+
+answerTimer=
+setTimeout(()=>{
+
+document.getElementById(
+"answer"
+).innerText=
+"Answer: "+result;
+
+},time);
+
+
+nextQuestionTimer=
+setTimeout(()=>{
+
+generateQuestion();
+
+},time+1500);
+
+}
+
+function startGame(){
+
+stopGame();
+
+running=true;
+
+generateQuestion();
+
+}
+
+function stopGame(){
+
+running=false;
+
+clearTimeout(answerTimer);
+
+clearTimeout(nextQuestionTimer);
+
+document.getElementById(
+"question"
+).innerText=
+"Paused";
+
+document.getElementById(
+"answer"
+).innerText="";
+
+}
+
+</script>
+
+</body>
+</html>
